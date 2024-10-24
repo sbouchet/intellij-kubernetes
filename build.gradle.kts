@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.gradleIntelliJPlugin) // Gradle IntelliJ Plugin
     alias(libs.plugins.kotlinJvm)
     id("idea")
+    id("java")
 }
 
 group = "com.redhat.devtools.intellij"
@@ -84,7 +85,7 @@ dependencies {
 }
 
 intellijPlatform {
-    buildSearchableOptions = false
+    //buildSearchableOptions = false
 
     pluginConfiguration {
         ideaVersion {
@@ -110,6 +111,14 @@ intellijPlatform {
 }
 
 tasks {
+    compileJava {
+        options.isIncremental = false
+    }
+
+    compileKotlin {
+        incremental = false
+    }
+
     wrapper {
         gradleVersion = providers.gradleProperty("gradleVersion").get()
     }
@@ -134,6 +143,14 @@ configurations.all {
 }
 
 sourceSets {
+    main {
+        java.srcDir("src/main/kotlin")
+        kotlin.srcDir("src/main/kotlin")
+    }
+    test {
+        java.srcDir("src/test/kotlin")
+        kotlin.srcDir("src/test/kotlin")
+    }
     create("it") {
         description = "integrationTest"
         compileClasspath += sourceSets.main.get().compileClasspath + sourceSets.test.get().compileClasspath
